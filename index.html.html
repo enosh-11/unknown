@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Little Birthday Mystery ♡</title>
+<style>
+  :root{--bg:#100d1d;--panel:rgba(255,255,255,.075);--line:rgba(255,255,255,.15);--text:#fff8ff;--muted:#c8bdd8;--pink:#ff9fda;--lav:#c4adff;--gold:#ffe1a8}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 15% 15%,#402452 0,transparent 38%),radial-gradient(ellipse at 85% 80%,#292454 0,transparent 40%),var(--bg);display:grid;place-items:center;padding:24px;overflow-x:hidden}
+  body:before,body:after{content:"✦";position:fixed;color:#fff8;pointer-events:none;animation:float 7s ease-in-out infinite;font-size:20px;top:12%;left:10%}
+  body:after{content:"✧";top:75%;left:auto;right:12%;animation-delay:-3s;font-size:30px}
+  @keyframes float{50%{transform:translateY(-16px) rotate(20deg);opacity:.5}}
+  .wrap{width:min(760px,100%);position:relative}
+  #choiceScreen[hidden]{display:none!important}
+  .eyebrow{text-align:center;text-transform:uppercase;letter-spacing:.22em;color:var(--pink);font-size:.72rem;font-weight:700;margin-bottom:12px}
+  h1{font-size:clamp(2rem,6vw,3.6rem);letter-spacing:-.045em;text-align:center;line-height:1.06;margin:0}
+  .subtitle{text-align:center;color:var(--muted);line-height:1.65;max-width:490px;margin:16px auto 28px}
+  .bhaiya-message{white-space:pre-line;text-align:left;max-width:680px;margin:24px auto;line-height:1.8}
+  .eno-message{white-space:pre-line;text-align:left;max-width:680px;margin:24px auto;line-height:1.8}
+  .name-form{max-width:420px;margin:0 auto;display:grid;gap:12px}
+  .name-form input{width:100%;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.08);color:var(--text);font:inherit;outline:none}
+  .name-form input::placeholder{color:#b8abc9}
+  .name-form input:focus{border-color:var(--pink);box-shadow:0 0 0 3px #ff9fda20}
+  .continue-button{padding:15px 18px;border:0;border-radius:16px;background:linear-gradient(110deg,var(--pink),var(--lav));color:#26152f;font:inherit;font-weight:750;cursor:pointer}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .choice{border:1px solid var(--line);border-radius:24px;padding:22px;background:var(--panel);color:var(--text);text-align:left;cursor:pointer;min-height:158px;transition:transform .22s,border-color .22s,background .22s;backdrop-filter:blur(16px)}
+  .choice:hover,.choice:focus-visible{transform:translateY(-4px);border-color:#ff9fda99;background:rgba(255,255,255,.12);outline:none}
+  .key{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#ffb9e4,#c6a9ff);color:#2b1537;font-size:1.55rem;margin-bottom:18px}
+  .choice h2{font-size:1.25rem;margin:0 0 6px}
+  .choice p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}
+  .hint{text-align:center;color:#aa9fbd;font-size:.8rem;margin-top:22px}
+  .panel{display:none;margin-top:22px;border:1px solid var(--line);border-radius:24px;padding:clamp(20px,5vw,32px);background:rgba(19,15,35,.76);backdrop-filter:blur(18px);animation:appear .28s ease}
+  .panel.active{display:block}
+  @keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .panel-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+  .tag{font-size:.75rem;color:var(--pink);letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+  .back{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);padding:8px 13px;cursor:pointer}
+  .panel h2{font-size:clamp(1.4rem,4vw,2rem);margin:0 0 8px}
+  .panel .desc{color:var(--muted);line-height:1.6;margin:0 0 20px}
+  .answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .answer{padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.055);color:var(--text);font:inherit;cursor:pointer;text-align:left;transition:.2s}
+  .answer:hover,.answer:focus-visible{border-color:var(--lav);background:rgba(196,173,255,.12);outline:none}\n  .answer:disabled{cursor:not-allowed;opacity:.72}
+  .answer small{display:block;color:var(--muted);margin-top:5px}
+  .selection{display:none;margin-top:16px;border-radius:14px;background:rgba(255,159,218,.09);border:1px solid rgba(255,159,218,.22);padding:13px 15px;color:#f9dff0;line-height:1.5}
+  .selection.show{display:block}
+  footer{text-align:center;color:#8f849f;font-size:.75rem;margin-top:26px}
+  @media(max-width:520px){body{padding:18px}.choices{gap:10px}.choice{padding:17px;min-height:145px;border-radius:19px}.answers{grid-template-columns:1fr}.key{width:42px;height:42px;margin-bottom:14px}.panel{border-radius:20px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section id="nameScreen">
+    <div class="eyebrow">A little birthday mystery ✦</div>
+    <h1>Sabse pehle…</h1>
+    <p class="subtitle">Kon hai tu (pata hai fir bhi formality ke liye)</p>
+    <div id="nameForm" class="name-form">
+      <label class="sr-only" for="visitorName">Your name</label>
+      <input id="visitorName" name="visitorName" type="text" maxlength="60" autocomplete="name" placeholder="Naam likh gawar">
+      <button class="continue-button" id="continueButton" type="button">Continue <span aria-hidden="true">→</span></button>
+      <p id="nameError" role="status" style="display:none;color:#ffb9e4;text-align:center;margin:0">Idhar apka naam ke bina ham samne nhi ja payenge meri jaan ♡</p>
+    </div>
+  </section>
+
+  <section id="choiceScreen" hidden>
+    <div class="eyebrow">Mera Mehnat hai gadhi ✦</div>
+    <h1>Me tere liye kya hu?</h1>
+    <p class="subtitle">tere pas 2 options hai and wo decide karega tere liye mera msg kya hai. ♡</p>
+
+  <section class="choices" aria-label="Choose a key">
+    <button class="choice" type="button" data-path="Bhaiya">
+      <span class="key" aria-hidden="true">⚿</span>
+      <h2>Bhaiya</h2>
+      <p>If you really think I'm the one as elder brother for you. Please ye wala nhi</p>
+      </p>
+    </button>
+    <button class="choice" type="button" data-path="Eno">
+      <span class="key" aria-hidden="true">🗝</span>
+      <h2>Eno</h2>
+      <p>If I'm just a friend from random gc.</p>
+    </button>
+  </section>
+  </section>
+
+  <section class="panel" id="questionPanel" aria-live="polite">
+    <div class="panel-top">
+      <span class="tag" id="pathTag">Aage jane ke liye tujhe firse jawab dena padega</span>
+      <button class="back" id="backButton" type="button">← Back</button>
+    </div>
+    <h2 id="questionTitle">Was it all worth it?</h2>
+    <div class="answers">
+      <button class="answer" type="button" data-answer="Option A">
+        <strong>Yes</strong><small></small>
+      </button>
+      <button class="answer" type="button" data-answer="Option B">
+        <strong>No</strong><small></small>
+      </button>
+    </div>
+    <div class="selection" id="selectionMessage"></div>
+  </section>
+
+</main>
+<script>
+  const panel = document.getElementById('questionPanel');
+  const nameScreen = document.getElementById('nameScreen');
+  const choiceScreen = document.getElementById('choiceScreen');
+  const visitorNameInput = document.getElementById('visitorName');
+  let visitorName = '';
+  function continueToChoices() {
+    visitorName = visitorNameInput.value.trim();
+    const nameError = document.getElementById('nameError');
+    if (!visitorName) {
+      nameError.style.display = 'block';
+      visitorNameInput.focus();
+      return;
+    }
+    nameError.style.display = 'none';
+    nameScreen.style.display = 'none';
+    choiceScreen.hidden = false;
+    choiceScreen.style.display = 'block';
+  }
+  document.getElementById('continueButton').addEventListener('click', continueToChoices);
+  visitorNameInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      continueToChoices();
+    }
+  });
+  const pathTag = document.getElementById('pathTag');
+  const questionTitle = document.getElementById('questionTitle');
+  const selectionMessage = document.getElementById('selectionMessage');
+  let currentPath = '';
+  document.querySelectorAll('[data-path]').forEach(button => {
+    button.addEventListener('click', () => {
+      currentPath = button.dataset.path;
+      pathTag.textContent = currentPath === 'Bhaiya'
+        ? "Ye option choose karke acha nhi kiya, dusra choose kar please"
+        : 'Acha hua idhar agayi';
+      questionTitle.textContent = currentPath === 'Bhaiya'
+        ? 'Was it all worth it?'
+        : 'Chal idhar koi question nhi hai bas koi option choose karle';
+      const answerButtons = document.querySelectorAll('[data-answer]');
+      answerButtons[0].querySelector('strong').textContent = currentPath === 'Bhaiya' ? 'Yes' : 'Option 1';
+      answerButtons[1].querySelector('strong').textContent = currentPath === 'Bhaiya' ? 'No' : 'Option 2';
+      answerButtons[0].querySelector('small').textContent = '';
+      answerButtons[1].querySelector('small').textContent = '';
+      answerButtons.forEach(answer => answer.disabled = false);
+      selectionMessage.classList.remove('show');
+      selectionMessage.textContent = '';
+      panel.classList.add('active');
+      panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+  });
+  document.getElementById('backButton').addEventListener('click', () => {
+    panel.classList.remove('active');
+    selectionMessage.classList.remove('show');
+    document.querySelectorAll('[data-answer]').forEach(answer => answer.disabled = false);
+  });
+  document.querySelectorAll('[data-answer]').forEach(button => {
+    button.addEventListener('click', () => {
+      const answerButtons = document.querySelectorAll('[data-answer]');
+      if (currentPath === 'Bhaiya') {
+        answerButtons.forEach(answer => answer.disabled = true);
+        if (button.dataset.answer === 'Option A') {
+          selectionMessage.textContent = "That's incorrect. You can't enter the next page because you were wrong.";
+        } else {
+          // The correct "No" answer takes her to a separate page.
+          nameScreen.style.display = 'none';
+          choiceScreen.style.display = 'none';
+          panel.classList.remove('active');
+          selectionMessage.classList.remove('show');
+          let bhaiyaNextPage = document.getElementById('bhaiyaNextPage');
+          if (!bhaiyaNextPage) {
+            bhaiyaNextPage = document.createElement('section');
+            bhaiyaNextPage.id = 'bhaiyaNextPage';
+            bhaiyaNextPage.innerHTML = `
+              <div class="eyebrow">YEH WALA CHOOSE NAHI KARNA THA YAR</div>
+              <h1>First off all wishing you a very joufull Birthday meri bachi ♡</h1>
+              <p class="subtitle bhaiya-message">Tujhey ye wala option choose nhi karna tha tune tujhey hurt ho agar fark padta toh, So I've decided to step back from whatever we are right now, and i think you do know why it is. Agar nhi pata hai to bata deta hu, maine bola ki tujhey ab muhey hurt nhi hota, baigun..! dill pe lorry chalo do issey acha lelin bhai yar bohot bura lagta hai jab me tere liye wait karta rahu and tu mujhey ignore and batau toh mujhe ab bharosa hi nhi ho rha terpe and I can't blame you for that obviously tujhe bhi hurt hoga jab tu bhi kisi ke liye efforts dale and samne wala insaan ko ghanta bhi fark na pade. Khair, ye sab chhodo me or nhi seh sakta betu ab me nhi reh sakta kyuki meri bhi gf hai and me nhi chahta ki ab uske alawa mere zindagi me koi or shaks rahe and haa iska ye bhi mtlb nhi ki me tujhe hamesha ke liye bye bol rha hu but doori bad gayi hai bohot and thoda or bada dete hai and yeah obvious si baat jab tujhey kisi ki zarurat pade toh me hu hamesha tere liye lekin pehle jaisi bat chit nhi hoga idk why but ye type kar rha hu toh bohot ajeeb sa lag rha hai it's like we're greeting our last goodbyes' lekin nhi we're just changing our routes bas or kuch nhi anyways tujhey ye option choose nhi karna tha and batau toh tu ye mere msg ko bday ke din ignore kar degi tu ye mera msg sabse last padegi lekin mujhe abhi bhi lag rha hai ki tu ye option choose nhi karna chaiye tha me terko pehle se hi warning dete aya hu... anyways Good bye and love you always</p>
+            `;
+            document.querySelector('main.wrap').appendChild(bhaiyaNextPage);
+          }
+          bhaiyaNextPage.style.display = 'block';
+          bhaiyaNextPage.scrollIntoView({behavior:'smooth',block:'start'});
+          return;
+        }
+      } else {
+        // Both Eno options lead to the same destination page.
+        nameScreen.style.display = 'none';
+        choiceScreen.style.display = 'none';
+        panel.classList.remove('active');
+        selectionMessage.classList.remove('show');
+        let nextPage = document.getElementById('enoNextPage');
+        if (!nextPage) {
+          nextPage = document.createElement('section');
+          nextPage.id = 'enoNextPage';
+          nextPage.innerHTML = `
+              <div class="eyebrow">From your lovely Bhaiya and Eno ✦</div>
+              <h1>Happy 18th meri bachi</h1>
+              <p class="subtitle eno-message">zyada kuch hai nhi bolne ke liye kyuki tujhe already pata hai and mujhe 80% pakka hai ki tu mujhe ignore karke dusro ke wishes ko reply dene ke baad padh rhi hai, haa bura laga khair, I did my part..!
+Anyways Happy Birthday, Betu. ❤️‍🩹🫂
+If there's one thing I genuinely wish for you today, it's that life gives you a thousand reasons to smile, even on the days when you don't feel like smiling at all. I hope you get everything your heart quietly wishes for, even the things you never tell anyone about. May you always find people who understand your silence, notice the little changes in your mood, and stay beside you when things aren't as beautiful as they seem. And no matter how much you grow, how much life changes, or how many new people become a part of your world, I hope you never forget how precious you are as a person. You have a place in my heart that I don't think words could ever properly explain, and I'm genuinely grateful that our paths crossed. Maybe I don't always express things perfectly, and maybe there are feelings that are difficult to put into words, but one thing has always been real: the care I have for you. I hope this new year of your life is softer on your heart, kinder to your mind, and full of moments that make you feel loved without ever having to ask for it. Please take care of that beautiful heart of yours, Betu. Keep smiling, keep growing, and never settle for anything that makes you forget your worth. I pray that God protects you from things you don't see coming, gives you strength for the things you cannot avoid, and blesses you with the happiness you've always deserved. No matter where life takes us, I'll always wish the very best for you. Happy Birthday once again, my Betu. May this world give back some of the beautiful things you bring into it and i genuienly wish that you could find someone better than me. 🫂❤️‍🩹✨
+Love you so much,
+regards Bhaiya</p>
+            `;
+          document.querySelector('main.wrap').appendChild(nextPage);
+        }
+        nextPage.style.display = 'block';
+        nextPage.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
+      selectionMessage.classList.add('show');
+    });
+  });
+</script>
+</body>
+</html>
